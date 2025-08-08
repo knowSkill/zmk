@@ -1,12 +1,17 @@
 #include "charybdis.dtsi"
+
+#define FAKE_CORNE
+#ifndef FAKE_CORNE
 #include "charybdis_pmw3610.dtsi"
 #include "charybdis_pointer.dtsi"
+#endif
 
 // The matrix transform is 6 columns over because the left half is 6 columns wide.
 &default_transform {
 	col-offset = <6>;
 };
 
+#ifndef FAKE_CORNE
 // KSCAN matrix
 &kscan0 {
 	compatible = "zmk,kscan-gpio-matrix";
@@ -27,9 +32,33 @@
 		, <&pro_micro 9 GPIO_ACTIVE_HIGH>
 		;
 };
+#else
+&kscan0 {
+	compatible = "zmk,kscan-gpio-matrix";
+	
+	col-gpios
+        = <&pro_micro 14 GPIO_ACTIVE_HIGH>
+        , <&pro_micro 15 GPIO_ACTIVE_HIGH>
+        , <&pro_micro 18 GPIO_ACTIVE_HIGH>
+        , <&pro_micro 19 GPIO_ACTIVE_HIGH>
+        , <&pro_micro 20 GPIO_ACTIVE_HIGH>
+        , <&pro_micro 21 GPIO_ACTIVE_HIGH>
+        ;
+	
+	row-gpios
+		= <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+		, <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+		, <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+		, <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+		;
 
+};
+#endif
+
+#ifndef FAKE_CORNE
 /* enable the listener on central */
 &trackball_listener {
     status = "okay";
     device = <&trackball>;
 };
+#endif
